@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/amirhnajafiz/hls/internal/cmd/server"
+	"github.com/amirhnajafiz/hls/internal/telemetry/config"
 	"github.com/knadh/koanf"
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/file"
@@ -11,6 +13,8 @@ import (
 )
 
 type Config struct {
+	Telemetry config.Config `koanf:"telemetry"`
+	Server    server.Config `koanf:"server"`
 }
 
 func Load() Config {
