@@ -3,17 +3,15 @@ package metric
 import "github.com/prometheus/client_golang/prometheus"
 
 const (
-	Namespace = "mqtt_blackbox_exporter"
-	Subsystem = "client"
+	Namespace = "hls"
+	Subsystem = "stream"
 )
 
 // Metrics has all the client metrics.
 type Metrics struct {
-	ConnectionErrors prometheus.Counter
-	PublishErrors    prometheus.Counter
-	Pings            prometheus.Counter
-	Pongs            prometheus.Counter
-	PingDuration     prometheus.Histogram
+	Failed   prometheus.Counter
+	Requests prometheus.Counter
+	BitRate  prometheus.Histogram
 }
 
 func newCounter(counterOpts prometheus.CounterOpts) prometheus.Counter {
@@ -38,39 +36,25 @@ func newHistogram(histogramOpts prometheus.HistogramOpts) prometheus.Histogram {
 
 func NewMetrics() Metrics {
 	return Metrics{
-		ConnectionErrors: newCounter(prometheus.CounterOpts{
+		Failed: newCounter(prometheus.CounterOpts{
 			Namespace:   Namespace,
 			Subsystem:   Subsystem,
 			Name:        "connection_errors_total",
 			Help:        "total number of connection errors",
 			ConstLabels: nil,
 		}),
-		PublishErrors: newCounter(prometheus.CounterOpts{
+		Requests: newCounter(prometheus.CounterOpts{
 			Namespace:   Namespace,
 			Subsystem:   Subsystem,
-			Name:        "publish_errors_total",
-			Help:        "total number of publish errors",
+			Name:        "total_number_of_requests",
+			Help:        "total number of requests",
 			ConstLabels: nil,
 		}),
-		Pings: newCounter(prometheus.CounterOpts{
+		BitRate: newHistogram(prometheus.HistogramOpts{
 			Namespace:   Namespace,
 			Subsystem:   Subsystem,
-			Name:        "pings_total",
-			Help:        "total number of published pings",
-			ConstLabels: nil,
-		}),
-		Pongs: newCounter(prometheus.CounterOpts{
-			Namespace:   Namespace,
-			Subsystem:   Subsystem,
-			Name:        "pongs_totla",
-			Help:        "total number of received pongs",
-			ConstLabels: nil,
-		}),
-		PingDuration: newHistogram(prometheus.HistogramOpts{
-			Namespace:   Namespace,
-			Subsystem:   Subsystem,
-			Name:        "ping_duration_seconds",
-			Help:        "from ping to pong duration in seconds",
+			Name:        "stream_bit_rate",
+			Help:        "bit rate of our stream server",
 			ConstLabels: nil,
 			Buckets:     prometheus.DefBuckets,
 		}),
