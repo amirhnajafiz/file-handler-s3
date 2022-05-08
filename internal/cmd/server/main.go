@@ -6,10 +6,10 @@ import (
 	"net/http"
 )
 
-func New() {
+func New(cfg Config) {
 	// configure the songs' directory name and port
 	const songsDir = "songs"
-	const port = 8080
+	port := cfg.Port
 
 	// add a handler for the song files
 	http.Handle("/", addHeaders(http.FileServer(http.Dir(songsDir))))
