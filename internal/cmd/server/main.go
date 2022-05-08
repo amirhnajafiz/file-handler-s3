@@ -15,6 +15,9 @@ func New(cfg Config) {
 	http.Handle("/", addHeaders(http.FileServer(http.Dir(songsDir))))
 	fmt.Printf("Starting server on %v\n", port)
 	log.Printf("Serving %s on HTTP port: %v\n", songsDir, port)
+
+	// serve and log errors
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", cfg.Port), nil))
 }
 
 // addHeaders will act as middleware to give us CORS support
