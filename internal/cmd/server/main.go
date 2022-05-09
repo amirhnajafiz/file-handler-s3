@@ -4,9 +4,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func New(cfg Config) {
+	// switch to fiber
+	_ = fiber.New()
+
 	// configure the songs' directory name and port
 	const songsDir = "songs"
 	port := cfg.Port
