@@ -62,7 +62,9 @@ func uploadFile() http.HandlerFunc {
 		// create a temp file
 		tempFile, err := ioutil.TempFile(songsDir, "*")
 		if err != nil {
-			fmt.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+
+			return
 		}
 
 		defer func(tempFile *os.File) {
@@ -72,10 +74,14 @@ func uploadFile() http.HandlerFunc {
 		// reading the file bytes
 		fileBytes, err := ioutil.ReadAll(file)
 		if err != nil {
-			fmt.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+
+			return
 		}
 
 		// write this byte array to our temporary file
 		_, _ = tempFile.Write(fileBytes)
+
+		_, _ = w.Write([]byte("Successfully uploaded file"))
 	}
 }
