@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"log"
+	"mime/multipart"
 	"net/http"
 )
 
@@ -32,6 +33,29 @@ func addHeaders(h http.Handler) http.HandlerFunc {
 
 func uploadFile() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		// Maximum size of form request
+		err := r.ParseMultipartForm(10 << 20)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusRequestEntityTooLarge)
 
+			return
+		}
+
+		// receiving the uploaded file from body
+		file, handler, err := r.FormFile("myFile")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+
+			return
+		}
+
+		defer func(file multipart.File) {
+			_ = file.Close()
+		}(file)
+
+		// logging the file information
+		log.Printf("Uploaded File: %+v\n", handler.Filename)
+		log.Printf("File Size: %+v\n", handler.Size)
+		log.Printf("MIME Header: %+v\n", handler.Header)
 	}
 }
