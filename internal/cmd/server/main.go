@@ -68,5 +68,14 @@ func uploadFile() http.HandlerFunc {
 		defer func(tempFile *os.File) {
 			_ = tempFile.Close()
 		}(tempFile)
+
+		// reading the file bytes
+		fileBytes, err := ioutil.ReadAll(file)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		// write this byte array to our temporary file
+		_, _ = tempFile.Write(fileBytes)
 	}
 }
