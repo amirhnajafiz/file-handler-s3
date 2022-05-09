@@ -17,7 +17,8 @@ func New(cfg Config) {
 	http.Handle("/", addHeaders(http.FileServer(http.Dir(songsDir))))
 	// add a handler for uploading a file
 	http.Handle("/upload", uploadFile())
-	fmt.Printf("Starting server on %v\n", cfg.Port)
+
+	log.Printf("Starting server on %v\n", cfg.Port)
 	log.Printf("Serving %s on HTTP port: %v\n", songsDir, cfg.Port)
 
 	// serve and log errors
@@ -81,6 +82,8 @@ func uploadFile() http.HandlerFunc {
 
 		// write this byte array to our temporary file
 		_, _ = tempFile.Write(fileBytes)
+
+		log.Println("File uploaded")
 
 		_, _ = w.Write([]byte("Successfully uploaded file"))
 	}
