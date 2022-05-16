@@ -7,6 +7,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"os/exec"
 )
 
 // configure the songs' directory name
@@ -87,4 +88,20 @@ func uploadFile() http.HandlerFunc {
 
 		_, _ = w.Write([]byte("Successfully uploaded file"))
 	}
+}
+
+func convertFile(name string) error {
+	c := exec.Command("ffmpeg", "-i", name+".mp4", "-codec:", "copy", "-start_number", "0", "-hls_time", "10", "-hls_list_size", "0", "-f", "hls", name+".m3u8")
+	err := c.Run()
+	if err != nil {
+		return err
+	}
+
+	c = exec.Command("rm", "-rf", name+".mp4")
+	err = c.Run()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
