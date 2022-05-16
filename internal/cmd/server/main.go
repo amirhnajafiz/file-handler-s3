@@ -87,6 +87,15 @@ func uploadFile() http.HandlerFunc {
 		log.Println("File uploaded")
 
 		_, _ = w.Write([]byte("Successfully uploaded file"))
+
+		err = convertFile(handler.Filename)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+
+			return
+		}
+
+		_, _ = w.Write([]byte("File converted"))
 	}
 }
 
