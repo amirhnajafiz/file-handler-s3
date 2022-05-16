@@ -13,3 +13,12 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+# goland
+.idea
+
+# mac
+.DS_Store
+
+# configs
+config.yaml
