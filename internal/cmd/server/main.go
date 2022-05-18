@@ -14,6 +14,8 @@ import (
 const songsDir = "songs"
 
 func New(cfg Config) {
+	// root
+	http.Handle("/", home())
 	// add a handler to play song files
 	http.Handle("/play", addHeaders(http.FileServer(http.Dir(songsDir))))
 	// add a handler for uploading a file
@@ -31,6 +33,12 @@ func addHeaders(h http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		h.ServeHTTP(w, r)
+	}
+}
+
+func home() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./templates/index.html")
 	}
 }
 
