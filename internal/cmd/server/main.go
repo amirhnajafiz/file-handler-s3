@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/amirhnajafiz/hls/internal/http/handler"
 )
@@ -12,6 +13,18 @@ import (
 const songsDir = "songs"
 
 func New(cfg Config) {
+	if _, err := os.Stat(songsDir); err != nil {
+		if os.IsNotExist(err) {
+			// file does not exist
+			_ = os.Mkdir(songsDir, os.ModePerm)
+
+			log.Println("Dir created")
+		} else {
+			log.Println("Dir exists")
+		}
+	}
+
+	// handler init
 	h := handler.Handler{}
 
 	// root
