@@ -15,7 +15,7 @@ const songsDir = "songs"
 
 func New(cfg Config) {
 	// add a handler to play song files
-	http.Handle("/", addHeaders(http.FileServer(http.Dir(songsDir))))
+	http.Handle("/play", addHeaders(http.FileServer(http.Dir(songsDir))))
 	// add a handler for uploading a file
 	http.Handle("/upload", uploadFile())
 
