@@ -12,9 +12,6 @@ import (
 type Handler struct {
 }
 
-// configure the songs' directory name
-const songsDir = "songs"
-
 // AddHeaders will act as middleware to give us CORS support
 func (_ Handler) AddHeaders(h http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -29,7 +26,7 @@ func (_ Handler) Home() http.HandlerFunc {
 	}
 }
 
-func (_ Handler) UploadFile() http.HandlerFunc {
+func (_ Handler) UploadFile(songsDir string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Maximum size of form request
 		err := r.ParseMultipartForm(10 << 20)
