@@ -34,7 +34,7 @@
 
         for (let d in data) {
           // extracting file name
-          const name = data[d]
+          const obj = data[d]
           // the container li and ul as container
           let row = document.createElement("li")
           let container = document.createElement("ul")
@@ -42,7 +42,7 @@
           // row 1 : name
           let in_row_1 = document.createElement("li")
           let f1 = document.createElement("h4")
-          f1.innerText = name
+          f1.innerText = obj.name
           in_row_1.appendChild(f1)
           // row 2 : download
           let in_row_2 = document.createElement("li")
@@ -52,7 +52,7 @@
           let i2 = document.createElement("input")
           i2.setAttribute("type", "hidden")
           i2.setAttribute("name", "file")
-          i2.setAttribute("value", name)
+          i2.setAttribute("value", obj.name)
           let t2 = document.createElement("input")
           t2.setAttribute("type", "submit")
           t2.setAttribute("value", "Download")
@@ -68,7 +68,7 @@
           let i3 = document.createElement("input")
           i3.setAttribute("type", "hidden")
           i3.setAttribute("name", "file")
-          i3.setAttribute("value", name)
+          i3.setAttribute("value", obj.name)
           let t3 = document.createElement("input")
           t3.setAttribute("type", "submit")
           t3.setAttribute("value", "Delete")
