@@ -8,15 +8,29 @@
   </head>
   <body>
     <div id="app">
-      No files.
     </div>
     <script>
-      fetch('http://localhost:8080/all')
-              .then(async response => {
-                console.log(response.status)
+      function put(data) {
+        const mother = document.getElementById("app")
+        const main = document.createElement("ul")
 
-                document.getElementById("app").innerText = await response.json()
-              })
+        for (let d in data) {
+          let n = document.createElement("li")
+          n.innerText = data[d]
+          main.appendChild(n)
+        }
+
+        if (data.length > 1) {
+          mother.appendChild(main)
+        } else {
+          mother.innerText = "No files."
+        }
+
+      }
+
+      fetch('http://localhost:8080/all')
+              .then(response => response.json())
+              .then(data => put(data))
               .catch(async error => {
                 console.log(error)
               })
