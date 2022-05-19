@@ -6,7 +6,6 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
-	"os/exec"
 )
 
 type Handler struct {
@@ -78,25 +77,11 @@ func (_ Handler) UploadFile(songsDir string) http.HandlerFunc {
 		// write this byte array to our temporary file
 		_, _ = tempFile.Write(fileBytes)
 
+		// rename file
+		_ = os.Rename(tempFile.Name(), handler.Filename)
+
 		log.Println("File uploaded")
 
 		_, _ = w.Write([]byte("Successfully uploaded file [" + tempFile.Name() + "]"))
 	}
-}
-
-// convertFile method
-func (_ Handler) convertFile(name string) error {
-	c := exec.Command("ffmpeg", "-i", name+".mp4", "-codec:", "copy", "-start_number", "0", "-hls_time", "10", "-hls_list_size", "0", "-f", "hls", name+".m3u8")
-	err := c.Run()
-	if err != nil {
-		return err
-	}
-
-	c = exec.Command("rm", "-rf", name+".mp4")
-	err = c.Run()
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
