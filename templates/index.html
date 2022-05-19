@@ -5,23 +5,31 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
         <title>HLS</title>
+        <!-- CSS only -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+              rel="stylesheet"
+              integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+              crossorigin="anonymous"
+        />
     </head>
     <body>
-        <div>
-          <span>
-            <a href="http://localhost:8080/">Home</a>
-          </span>
-            <span>
-            <a href="http://localhost:8080/files">Files</a>
-          </span>
+        <div class="container w-50 my-5">
+            <div class="navbar navbar-light bg-primary px-4">
+              <span class="nav-item" style="color: #ffffff">
+                <a class="nav-link" href="http://localhost:8080/">Home</a>
+              </span>
+              <span class="nav-item" style="color: #ffffff">
+                <a class="nav-link" href="http://localhost:8080/files">Files</a>
+              </span>
+            </div>
+            <form
+                    enctype="multipart/form-data"
+                    action="http://localhost:8080/upload"
+                    method="post"
+            >
+                <input type="file" class="form-control my-3" name="myFile" />
+                <input type="submit" class="btn btn-primary my-1" value="upload" />
+            </form>
         </div>
-        <form
-                enctype="multipart/form-data"
-                action="http://localhost:8080/upload"
-                method="post"
-        >
-            <input type="file" name="myFile" />
-            <input type="submit" value="upload" />
-        </form>
     </body>
 </html>
