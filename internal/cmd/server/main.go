@@ -37,6 +37,8 @@ func New(cfg Config) {
 	http.Handle("/all", h.GetAllFiles(mainDir))
 	// remove a file
 	http.Handle("/del", h.RemoveFile(mainDir))
+	// download file
+	http.Handle("/get", h.DownloadFile(mainDir))
 
 	log.Printf("Starting server on %v\n", cfg.Port)
 	log.Printf("Serving %s on HTTP port: %v\n", mainDir, cfg.Port)
