@@ -89,9 +89,9 @@ func (_ Handler) UploadFile(mainDir string) http.HandlerFunc {
 		// rename file
 		_ = os.Rename(tempFile.Name(), fileName)
 
-		log.Println("File uploaded")
+		log.Println("Successfully uploaded file [" + handler.Filename + "]")
 
-		_, _ = w.Write([]byte("Successfully uploaded file [" + handler.Filename + "]"))
+		http.Redirect(w, r, "/files", http.StatusSeeOther)
 	}
 }
 
