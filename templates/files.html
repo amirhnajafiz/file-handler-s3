@@ -11,23 +11,37 @@
     </div>
     <script>
       function put(data) {
+        data.shift()
+
         const mother = document.getElementById("app")
         const main = document.createElement("ul")
 
         for (let d in data) {
+          const info = data[d]
           let n = document.createElement("li")
-          n.innerText = data[d]
+          let f = document.createElement("form")
+          f.setAttribute("action", "http://localhost:8080/del")
+          f.setAttribute("method", "POST")
+          let i = document.createElement("input")
+          i.setAttribute("type", "hidden")
+          i.setAttribute("name", "file")
+          i.setAttribute("value", info)
+          let t = document.createElement("input")
+          t.setAttribute("type", "submit")
+          t.setAttribute("value", info)
+          f.appendChild(i)
+          f.appendChild(t)
+          n.appendChild(f)
           main.appendChild(n)
         }
 
-        if (data.length > 1) {
+        if (data.length > 0) {
           mother.appendChild(main)
         } else {
           mother.innerText = "No files."
         }
 
       }
-
       fetch('http://localhost:8080/all')
               .then(response => response.json())
               .then(data => put(data))
