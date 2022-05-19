@@ -37,6 +37,7 @@
           const obj = data[d]
           // the container li and ul as container
           let row = document.createElement("li")
+          row.classList.add("mb-4")
           let container = document.createElement("ul")
           container.style.listStyleType = "none"
           // row 1 : name
@@ -44,6 +45,11 @@
           let f1 = document.createElement("h4")
           f1.innerText = obj.name
           in_row_1.appendChild(f1)
+          // row 1.5 : information
+          let in_row_1_1 = document.createElement("li")
+          let f11 = document.createElement("small")
+          f11.innerText = "Size: " + obj.size + "KB, Upload Time: " + obj.last_modify
+          in_row_1_1.appendChild(f11)
           // row 2 : download
           let in_row_2 = document.createElement("li")
           let f2 = document.createElement("form")
@@ -77,6 +83,7 @@
           f3.appendChild(t3)
           in_row_3.appendChild(f3)
 
+          container.appendChild(in_row_1_1)
           container.appendChild(in_row_2)
           container.appendChild(in_row_3)
 

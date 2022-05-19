@@ -100,9 +100,9 @@ func (_ Handler) UploadFile(mainDir string) http.HandlerFunc {
 func (_ Handler) GetAllFiles(mainDir string) http.HandlerFunc {
 	return func(w http.ResponseWriter, _ *http.Request) {
 		type pack struct {
-			Name       string    `json:"name"`
-			Size       int64     `json:"size"`
-			LastModify time.Time `json:"lastModify"`
+			Name       string `json:"name"`
+			Size       int64  `json:"size"`
+			LastModify string `json:"last_modify"`
 		}
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -118,7 +118,7 @@ func (_ Handler) GetAllFiles(mainDir string) http.HandlerFunc {
 			temp := pack{
 				Name:       parts[1],
 				Size:       info.Size(),
-				LastModify: info.ModTime(),
+				LastModify: info.ModTime().Format(time.RFC822),
 			}
 
 			files = append(files, temp)
