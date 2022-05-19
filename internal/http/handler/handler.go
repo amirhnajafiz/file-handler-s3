@@ -13,17 +13,11 @@ import (
 type Handler struct {
 }
 
-// AddHeaders will act as middleware to give us CORS support
-func (_ Handler) AddHeaders(h http.Handler) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		h.ServeHTTP(w, r)
-	}
-}
-
 // Home will return the home page
 func (_ Handler) Home() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+
 		http.ServeFile(w, r, "./templates/index.html")
 	}
 }
@@ -31,6 +25,8 @@ func (_ Handler) Home() http.HandlerFunc {
 // UploadFile gets the file from user request and saves it
 func (_ Handler) UploadFile(mainDir string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+
 		// Maximum size of form request
 		err := r.ParseMultipartForm(10 << 20)
 		if err != nil {
@@ -92,6 +88,8 @@ func (_ Handler) UploadFile(mainDir string) http.HandlerFunc {
 
 func (_ Handler) GetAllFiles(mainDir string) http.HandlerFunc {
 	return func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+
 		var files []string
 
 		err := filepath.Walk(mainDir, func(path string, info os.FileInfo, err error) error {
@@ -111,6 +109,8 @@ func (_ Handler) GetAllFiles(mainDir string) http.HandlerFunc {
 
 func (_ Handler) RemoveFile(mainDir string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+
 		fileName := mainDir + "/" + r.FormValue("file")
 
 		if _, err := os.Stat(fileName); err != nil {
