@@ -134,7 +134,7 @@ func (_ Handler) RemoveFile(mainDir string) http.HandlerFunc {
 			log.Println("File removed")
 		}
 
-		http.Redirect(w, r, "/files", http.StatusOK)
+		http.Redirect(w, r, "/files", http.StatusSeeOther)
 	}
 }
 
