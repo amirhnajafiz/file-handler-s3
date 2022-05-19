@@ -15,5 +15,20 @@
             <input type="file" name="myFile" />
             <input type="submit" value="upload" />
         </form>
+        <div id="app">
+
+        </div>
+
+        <script>
+            fetch('http://localhost:8080/all')
+                .then(async response => {
+                    console.log(response.status)
+
+                    document.getElementById("app").innerText = await response.json()
+                })
+                .catch(async error => {
+                    console.log(error)
+                })
+        </script>
     </body>
 </html>
