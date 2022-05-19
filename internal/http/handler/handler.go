@@ -108,3 +108,18 @@ func (_ Handler) GetAllFiles(mainDir string) http.HandlerFunc {
 		_ = json.NewEncoder(w).Encode(files)
 	}
 }
+
+func (_ Handler) RemoveFile(mainDir string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fileName := mainDir + "/" + r.FormValue("file")
+
+		if _, err := os.Stat(fileName); err != nil {
+			_ = os.Remove(fileName)
+			_, _ = w.Write([]byte("File removed"))
+
+			return
+		}
+
+		_, _ = w.Write([]byte("No file found"))
+	}
+}
