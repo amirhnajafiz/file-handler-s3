@@ -29,6 +29,8 @@ func New(cfg Config) {
 
 	// root
 	http.Handle("/", h.Home())
+	// files
+	http.Handle("/files", h.Files())
 	// add a handler for uploading a file
 	http.Handle("/upload", h.UploadFile(mainDir))
 	// get all files method
