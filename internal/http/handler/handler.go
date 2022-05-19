@@ -137,3 +137,14 @@ func (_ Handler) RemoveFile(mainDir string) http.HandlerFunc {
 		http.Redirect(w, r, "/files", http.StatusOK)
 	}
 }
+
+func (_ Handler) DownloadFile(mainDir string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fileName := mainDir + "/" + r.FormValue("file")
+
+		w.Header().Set("Content-Disposition", "attachment; filename="+fileName)
+		w.Header().Set("Content-Type", r.Header.Get("Content-Type"))
+
+		http.ServeFile(w, r, fileName)
+	}
+}
