@@ -128,13 +128,12 @@ func (_ Handler) RemoveFile(mainDir string) http.HandlerFunc {
 
 		fileName := mainDir + "/" + r.FormValue("file")
 
-		if _, err := os.Stat(fileName); err != nil {
+		if _, err := os.Stat(fileName); err == nil {
 			_ = os.Remove(fileName)
-			_, _ = w.Write([]byte("File removed"))
 
-			return
+			log.Println("File removed")
 		}
 
-		_, _ = w.Write([]byte("No file found"))
+		http.Redirect(w, r, "/files", http.StatusOK)
 	}
 }
