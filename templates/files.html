@@ -30,6 +30,7 @@
       function put(data) {
         const mother = document.getElementById("app")
         const main = document.createElement("ul")
+        main.style.listStyleType = "none"
 
         for (let d in data) {
           // extracting file name
@@ -37,9 +38,12 @@
           // the container li and ul as container
           let row = document.createElement("li")
           let container = document.createElement("ul")
+          container.style.listStyleType = "none"
           // row 1 : name
           let in_row_1 = document.createElement("li")
-          in_row_1.innerText = name
+          let f1 = document.createElement("h4")
+          f1.innerText = name
+          in_row_1.appendChild(f1)
           // row 2 : download
           let in_row_2 = document.createElement("li")
           let f2 = document.createElement("form")
@@ -52,6 +56,7 @@
           let t2 = document.createElement("input")
           t2.setAttribute("type", "submit")
           t2.setAttribute("value", "Download")
+          t2.classList.add("btn", "btn-primary", "my-1")
           f2.appendChild(i2)
           f2.appendChild(t2)
           in_row_2.appendChild(f2)
@@ -67,6 +72,7 @@
           let t3 = document.createElement("input")
           t3.setAttribute("type", "submit")
           t3.setAttribute("value", "Delete")
+          t3.classList.add("btn", "btn-danger", "my-1")
           f3.appendChild(i3)
           f3.appendChild(t3)
           in_row_3.appendChild(f3)
