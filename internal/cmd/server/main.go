@@ -29,10 +29,12 @@ func New(cfg Config) {
 
 	// root
 	http.Handle("/", h.Home())
-	// add a handler to play song files
-	http.Handle("/play", h.AddHeaders(http.FileServer(http.Dir(mainDir))))
 	// add a handler for uploading a file
 	http.Handle("/upload", h.UploadFile(mainDir))
+	// get all files method
+	http.Handle("/all", h.GetAllFiles(mainDir))
+	// remove a file
+	http.Handle("/del", h.RemoveFile(mainDir))
 
 	log.Printf("Starting server on %v\n", cfg.Port)
 	log.Printf("Serving %s on HTTP port: %v\n", mainDir, cfg.Port)
