@@ -14,15 +14,17 @@
     />
   </head>
   <body>
-    <div>
-      <span>
-        <a href="http://localhost:8080/">Home</a>
-      </span>
-      <span>
-        <a href="http://localhost:8080/files">Files</a>
-      </span>
-    </div>
-    <div id="app">
+    <div class="container w-50 my-5">
+      <div class="navbar navbar-light bg-primary px-4">
+        <span class="nav-item" style="color: #ffffff">
+          <a class="nav-link" href="http://localhost:8080/">Home</a>
+        </span>
+        <span class="nav-item" style="color: #ffffff">
+          <a class="nav-link" href="http://localhost:8080/files">Files</a>
+        </span>
+      </div>
+      <div id="app" class="px-4 py-4 my-3 border border-secondary rounded">
+      </div>
     </div>
     <script>
       function put(data) {
@@ -88,6 +90,7 @@
               .then(response => response.json())
               .then(data => put(data))
               .catch(async error => {
+                document.getElementById("app").innerText = "No files."
                 console.log(error)
               })
     </script>
