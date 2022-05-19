@@ -49,6 +49,8 @@ func (_ Handler) UploadFile(songsDir string) http.HandlerFunc {
 			_ = file.Close()
 		}(file)
 
+		fileName := songsDir + "/" + handler.Filename
+
 		// logging the file information
 		log.Printf("Uploaded File: %+v\n", handler.Filename)
 		log.Printf("File Size: %+v\n", handler.Size)
@@ -78,10 +80,10 @@ func (_ Handler) UploadFile(songsDir string) http.HandlerFunc {
 		_, _ = tempFile.Write(fileBytes)
 
 		// rename file
-		_ = os.Rename(tempFile.Name(), handler.Filename)
+		_ = os.Rename(tempFile.Name(), fileName)
 
 		log.Println("File uploaded")
 
-		_, _ = w.Write([]byte("Successfully uploaded file [" + tempFile.Name() + "]"))
+		_, _ = w.Write([]byte("Successfully uploaded file [" + handler.Filename + "]"))
 	}
 }
