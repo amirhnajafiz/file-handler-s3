@@ -20,12 +20,14 @@ func (_ Handler) AddHeaders(h http.Handler) http.HandlerFunc {
 	}
 }
 
+// Home will return the home page
 func (_ Handler) Home() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./templates/index.html")
 	}
 }
 
+// UploadFile gets the file from user request and saves it
 func (_ Handler) UploadFile(songsDir string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Maximum size of form request
@@ -82,6 +84,7 @@ func (_ Handler) UploadFile(songsDir string) http.HandlerFunc {
 	}
 }
 
+// convertFile method
 func (_ Handler) convertFile(name string) error {
 	c := exec.Command("ffmpeg", "-i", name+".mp4", "-codec:", "copy", "-start_number", "0", "-hls_time", "10", "-hls_list_size", "0", "-f", "hls", name+".m3u8")
 	err := c.Run()
