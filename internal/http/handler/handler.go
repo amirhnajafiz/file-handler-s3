@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 type Handler struct {
@@ -98,9 +99,15 @@ func (_ Handler) UploadFile(mainDir string) http.HandlerFunc {
 
 func (_ Handler) GetAllFiles(mainDir string) http.HandlerFunc {
 	return func(w http.ResponseWriter, _ *http.Request) {
+		type pack struct {
+			Name       string    `json:"name"`
+			Size       int64     `json:"size"`
+			LastModify time.Time `json:"lastModify"`
+		}
+
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
-		var files []string
+		var files []pack
 
 		err := filepath.Walk(mainDir, func(path string, info os.FileInfo, err error) error {
 			parts := strings.Split(path, "/")
@@ -108,7 +115,13 @@ func (_ Handler) GetAllFiles(mainDir string) http.HandlerFunc {
 				return nil
 			}
 
-			files = append(files, parts[1])
+			temp := pack{
+				Name:       parts[1],
+				Size:       info.Size(),
+				LastModify: info.ModTime(),
+			}
+
+			files = append(files, temp)
 
 			return nil
 		})
