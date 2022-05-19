@@ -22,6 +22,15 @@ func (_ Handler) Home() http.HandlerFunc {
 	}
 }
 
+// Files will return the files page
+func (_ Handler) Files() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+
+		http.ServeFile(w, r, "./templates/files.html")
+	}
+}
+
 // UploadFile gets the file from user request and saves it
 func (_ Handler) UploadFile(mainDir string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
