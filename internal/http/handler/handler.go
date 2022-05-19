@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type Handler struct {
@@ -102,7 +103,12 @@ func (_ Handler) GetAllFiles(mainDir string) http.HandlerFunc {
 		var files []string
 
 		err := filepath.Walk(mainDir, func(path string, info os.FileInfo, err error) error {
-			files = append(files, path)
+			parts := strings.Split(path, "/")
+			if len(parts) < 2 {
+				return nil
+			}
+
+			files = append(files, parts[1])
 
 			return nil
 		})
