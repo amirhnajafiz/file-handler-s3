@@ -15,25 +15,54 @@
         const main = document.createElement("ul")
 
         for (let d in data) {
-          const info = data[d]
-          let n = document.createElement("li")
-          let f = document.createElement("form")
-          f.setAttribute("action", "http://localhost:8080/del")
-          f.setAttribute("method", "POST")
-          let i = document.createElement("input")
-          i.setAttribute("type", "hidden")
-          i.setAttribute("name", "file")
-          i.setAttribute("value", info)
-          let t = document.createElement("input")
-          t.setAttribute("type", "submit")
-          t.setAttribute("value", info)
-          f.appendChild(i)
-          f.appendChild(t)
-          n.appendChild(f)
-          main.appendChild(n)
+          // extracting file name
+          const name = data[d]
+          // the container li and ul as container
+          let row = document.createElement("li")
+          let container = document.createElement("ul")
+          // row 1 : name
+          let in_row_1 = document.createElement("li")
+          in_row_1.innerText = name
+          // row 2 : download
+          let in_row_2 = document.createElement("li")
+          let f2 = document.createElement("form")
+          f2.setAttribute("action", "http://localhost:8080/get")
+          f2.setAttribute("method", "POST")
+          let i2 = document.createElement("input")
+          i2.setAttribute("type", "hidden")
+          i2.setAttribute("name", "file")
+          i2.setAttribute("value", name)
+          let t2 = document.createElement("input")
+          t2.setAttribute("type", "submit")
+          t2.setAttribute("value", "Download")
+          f2.appendChild(i2)
+          f2.appendChild(t2)
+          in_row_2.appendChild(f2)
+          // row 3 : remove
+          let in_row_3 = document.createElement("li")
+          let f3 = document.createElement("form")
+          f3.setAttribute("action", "http://localhost:8080/del")
+          f3.setAttribute("method", "POST")
+          let i3 = document.createElement("input")
+          i3.setAttribute("type", "hidden")
+          i3.setAttribute("name", "file")
+          i3.setAttribute("value", name)
+          let t3 = document.createElement("input")
+          t3.setAttribute("type", "submit")
+          t3.setAttribute("value", "Delete")
+          f3.appendChild(i3)
+          f3.appendChild(t3)
+          in_row_3.appendChild(f3)
+
+          row.appendChild(in_row_1)
+          row.appendChild(in_row_2)
+          row.appendChild(in_row_3)
+
+          row.appendChild(container)
+          main.appendChild(row)
         }
 
-        if (data.length > 0) {
+        if (data != null) {
           mother.appendChild(main)
         } else {
           mother.innerText = "No files."
