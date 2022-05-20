@@ -65,7 +65,7 @@ func (_ Handler) UploadFile(mainDir string) http.HandlerFunc {
 		var fileName string
 
 		if option != "" {
-			fileName = mainDir + "/" + fileName
+			fileName = mainDir + "/" + option
 		} else {
 			fileName = mainDir + "/" + handler.Filename
 		}
