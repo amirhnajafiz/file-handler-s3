@@ -46,6 +46,9 @@ func (_ Handler) UploadFile(mainDir string) http.HandlerFunc {
 			return
 		}
 
+		// get option from form value
+		option := r.FormValue("filename")
+
 		// receiving the uploaded file from body
 		file, handler, err := r.FormFile("myFile")
 		if err != nil {
@@ -58,7 +61,14 @@ func (_ Handler) UploadFile(mainDir string) http.HandlerFunc {
 			_ = file.Close()
 		}(file)
 
-		fileName := mainDir + "/" + handler.Filename
+		// setting file name
+		var fileName string
+
+		if option != "" {
+			fileName = mainDir + "/" + fileName
+		} else {
+			fileName = mainDir + "/" + handler.Filename
+		}
 
 		// logging the file information
 		log.Printf("Uploaded File: %+v\n", handler.Filename)
