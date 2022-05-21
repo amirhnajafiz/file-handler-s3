@@ -39,6 +39,8 @@ jobs:
         id: meta
         with:
           images: ${{ env.REGISTERY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{steps.get-tags.outputs.tags }}
       - uses: docker/build-push-action@v2
         with:
           file: "build/package/Dockerfile"
