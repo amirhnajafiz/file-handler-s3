@@ -21,8 +21,10 @@ type Handler struct {
 }
 
 // Home will return the home page
-func (_ Handler) Home() http.HandlerFunc {
+func (h Handler) Home() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		h.Metric.Requests.Add(1)
+
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
 		http.ServeFile(w, r, "./templates/index.html")
@@ -30,8 +32,10 @@ func (_ Handler) Home() http.HandlerFunc {
 }
 
 // Files will return the files page
-func (_ Handler) Files() http.HandlerFunc {
+func (h Handler) Files() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		h.Metric.Requests.Add(1)
+
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
 		http.ServeFile(w, r, "./templates/files.html")
@@ -39,13 +43,17 @@ func (_ Handler) Files() http.HandlerFunc {
 }
 
 // UploadFile gets the file from user request and saves it
-func (_ Handler) UploadFile(mainDir string) http.HandlerFunc {
+func (h Handler) UploadFile(mainDir string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		h.Metric.Requests.Add(1)
+
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
 		// Maximum size of form request
 		err := r.ParseMultipartForm(10 << 20)
 		if err != nil {
+			h.Metric.Failed.Add(1)
+
 			http.Error(w, err.Error(), http.StatusRequestEntityTooLarge)
 
 			return
@@ -57,6 +65,8 @@ func (_ Handler) UploadFile(mainDir string) http.HandlerFunc {
 		// receiving the uploaded file from body
 		file, handler, err := r.FormFile("myFile")
 		if err != nil {
+			h.Metric.Failed.Add(1)
+
 			http.Error(w, err.Error(), http.StatusBadRequest)
 
 			return
@@ -83,6 +93,8 @@ func (_ Handler) UploadFile(mainDir string) http.HandlerFunc {
 		// create a temp file
 		tempFile, err := ioutil.TempFile(mainDir, "*")
 		if err != nil {
+			h.Metric.Failed.Add(1)
+
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 
 			return
@@ -95,6 +107,8 @@ func (_ Handler) UploadFile(mainDir string) http.HandlerFunc {
 		// reading the file bytes
 		fileBytes, err := ioutil.ReadAll(file)
 		if err != nil {
+			h.Metric.Failed.Add(1)
+
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 
 			return
@@ -112,13 +126,15 @@ func (_ Handler) UploadFile(mainDir string) http.HandlerFunc {
 	}
 }
 
-func (_ Handler) GetAllFiles(mainDir string) http.HandlerFunc {
+func (h Handler) GetAllFiles(mainDir string) http.HandlerFunc {
 	return func(w http.ResponseWriter, _ *http.Request) {
 		type pack struct {
 			Name       string `json:"name"`
 			Size       int64  `json:"size"`
 			LastModify string `json:"last_modify"`
 		}
+
+		h.Metric.Requests.Add(1)
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
@@ -142,6 +158,8 @@ func (_ Handler) GetAllFiles(mainDir string) http.HandlerFunc {
 		})
 
 		if err != nil {
+			h.Metric.Failed.Add(1)
+
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 
@@ -150,8 +168,10 @@ func (_ Handler) GetAllFiles(mainDir string) http.HandlerFunc {
 	}
 }
 
-func (_ Handler) RemoveFile(mainDir string) http.HandlerFunc {
+func (h Handler) RemoveFile(mainDir string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		h.Metric.Requests.Add(1)
+
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
 		fileName := mainDir + "/" + r.FormValue("file")
@@ -166,8 +186,10 @@ func (_ Handler) RemoveFile(mainDir string) http.HandlerFunc {
 	}
 }
 
-func (_ Handler) DownloadFile(mainDir string) http.HandlerFunc {
+func (h Handler) DownloadFile(mainDir string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		h.Metric.Requests.Add(1)
+
 		fileName := mainDir + "/" + r.FormValue("file")
 
 		w.Header().Set("Content-Disposition", "attachment; filename="+fileName)
