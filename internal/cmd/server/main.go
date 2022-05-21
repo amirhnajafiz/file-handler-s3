@@ -7,12 +7,14 @@ import (
 	"os"
 
 	"github.com/amirhnajafiz/hls/internal/http/handler"
+	"github.com/amirhnajafiz/hls/internal/telemetry/metric"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // configure the songs' directory name
 const mainDir = "files"
 
-func New(cfg Config) {
+func New(cfg Config, t *trace.Tracer, m metric.Metrics) {
 	if _, err := os.Stat(mainDir); err != nil {
 		if os.IsNotExist(err) {
 			// file does not exist
@@ -25,7 +27,10 @@ func New(cfg Config) {
 	}
 
 	// handler init
-	h := handler.Handler{}
+	h := handler.Handler{
+		Trace:  t,
+		Metric: m,
+	}
 
 	// root
 	http.Handle("/", h.Home())
