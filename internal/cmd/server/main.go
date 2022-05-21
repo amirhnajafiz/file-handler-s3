@@ -14,7 +14,7 @@ import (
 // configure the songs' directory name
 const mainDir = "files"
 
-func New(cfg Config, t *trace.Tracer, m metric.Metrics) {
+func New(cfg Config, t trace.Tracer, m metric.Metrics) {
 	if _, err := os.Stat(mainDir); err != nil {
 		if os.IsNotExist(err) {
 			// file does not exist

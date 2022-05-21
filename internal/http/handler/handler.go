@@ -16,7 +16,7 @@ import (
 )
 
 type Handler struct {
-	Trace  *trace.Tracer
+	Trace  trace.Tracer
 	Metric metric.Metrics
 }
 
