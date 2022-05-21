@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"io/ioutil"
 	"log"
@@ -46,6 +47,9 @@ func (h Handler) Files() http.HandlerFunc {
 func (h Handler) UploadFile(mainDir string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		h.Metric.Requests.Add(1)
+
+		t, _ := h.Trace.Start(context.Background(), "HLS-upload")
+		defer t.Done()
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
@@ -170,6 +174,9 @@ func (h Handler) GetAllFiles(mainDir string) http.HandlerFunc {
 
 func (h Handler) RemoveFile(mainDir string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		t, _ := h.Trace.Start(context.Background(), "HLS-remove")
+		defer t.Done()
+
 		h.Metric.Requests.Add(1)
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -188,6 +195,9 @@ func (h Handler) RemoveFile(mainDir string) http.HandlerFunc {
 
 func (h Handler) DownloadFile(mainDir string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		t, _ := h.Trace.Start(context.Background(), "HLS-download")
+		defer t.Done()
+
 		h.Metric.Requests.Add(1)
 
 		fileName := mainDir + "/" + r.FormValue("file")
