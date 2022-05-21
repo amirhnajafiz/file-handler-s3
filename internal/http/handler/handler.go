@@ -10,9 +10,14 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/amirhnajafiz/hls/internal/telemetry/metric"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type Handler struct {
+	Trace  *trace.Tracer
+	Metric metric.Metrics
 }
 
 // Home will return the home page
