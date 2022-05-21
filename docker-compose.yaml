@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  node-app:
+    container_name: hls-build
+    restart: always
+    build:
+      dockerfile: build/package/Dockerfile
+    ports:
+      - "8080:8080"
