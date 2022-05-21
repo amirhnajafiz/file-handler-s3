@@ -10,7 +10,7 @@ WORKDIR /app
 COPY . .
 
 # Building the files
-RUN CGO_ENABLED=0 go build -o ./main
+RUN go build -o ./main
 
 # Building on the scratch base image
 FROM scratch
