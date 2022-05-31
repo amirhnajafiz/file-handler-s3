@@ -10,13 +10,13 @@ WORKDIR /app
 COPY . .
 
 # Building the files
-RUN CGO_ENABLED=0 go build -o ./main
+RUN go build -o /main
 
 # Building on the scratch base image
 FROM scratch
 
 # Copy the main file from last image
-COPY --from=build ./app/main ./bin/main
+COPY --from=build /app/main /bin/main
 
 # port
 EXPOSE 8080
