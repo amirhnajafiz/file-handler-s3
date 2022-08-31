@@ -1,14 +1,15 @@
-# FHS
-
-File handling system with Golang programming language.
-
 <p align="center">
     <img src="assets/logo.webp" width="100" />
 </p>
 
-A simple file server where you can upload, download, remove your files.
+<h1 align="center">
+FHS (File Handling System)
+</h1>
 
-## How to use?
+File handling system with Golang programming language. A simple file server where you can upload, download, remove your files. The main
+idea behind this project is to work with Media in Golang.
+
+## How to use this project?
 #### Using Docker
 ```shell
 docker-compose up -d
@@ -24,6 +25,6 @@ metrics on **localhost:1240**
 
 ## Demo
 <p align="center">
-    <img src="assets/index.png" width="1612" />
-    <img src="assets/files.png" width="1462" />
+    <img src="assets/index.png" width="500" /><br /><br />
+    <img src="assets/files.png" width="500" />
 </p>
