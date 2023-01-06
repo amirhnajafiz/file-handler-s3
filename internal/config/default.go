@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/amirhnajafiz/hls/internal/cmd/server"
+	"github.com/amirhnajafiz/hls/internal/storage"
 	"github.com/amirhnajafiz/hls/internal/telemetry/config"
 )
 
@@ -19,6 +20,13 @@ func Default() Config {
 				Enabled: true,
 				Address: ":1224",
 			},
+		},
+		Storage: storage.Config{
+			AccessKeyID:     "",
+			SecretAccessKey: "",
+			Region:          "",
+			Bucket:          "",
+			Endpoint:        "",
 		},
 		Server: server.Config{
 			Host: "0.0.0.0",

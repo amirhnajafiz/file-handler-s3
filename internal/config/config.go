@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/amirhnajafiz/hls/internal/cmd/server"
+	"github.com/amirhnajafiz/hls/internal/storage"
 	"github.com/amirhnajafiz/hls/internal/telemetry/config"
 	"github.com/knadh/koanf"
 	"github.com/knadh/koanf/parsers/yaml"
@@ -13,8 +14,9 @@ import (
 )
 
 type Config struct {
-	Telemetry config.Config `koanf:"telemetry"`
-	Server    server.Config `koanf:"server"`
+	Telemetry config.Config  `koanf:"telemetry"`
+	Storage   storage.Config `koanf:"storage"`
+	Server    server.Config  `koanf:"server"`
 }
 
 func Load() Config {
