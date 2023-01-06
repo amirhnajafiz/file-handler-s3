@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/amirhnajafiz/hls/internal/http/handler"
+	"github.com/amirhnajafiz/hls/internal/port/http/handler"
 	"github.com/amirhnajafiz/hls/internal/telemetry/metric"
 	"go.opentelemetry.io/otel/trace"
 )
