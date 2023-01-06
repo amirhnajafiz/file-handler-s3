@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -52,7 +51,6 @@ func (h Handler) UploadFile(mainDir string) http.HandlerFunc {
 
 		// setting file name
 		var fileName string
-
 		if option != "" {
 			fileName = mainDir + "/" + option
 		} else {
@@ -64,31 +62,14 @@ func (h Handler) UploadFile(mainDir string) http.HandlerFunc {
 		log.Printf("File Size: %+v\n", handler.Size)
 		log.Printf("MIME Header: %+v\n", handler.Header)
 
-		// create a temp file
-		tempFile, err := ioutil.TempFile(mainDir, "*")
-		if err != nil {
+		// upload file into s3
+		if er := h.S3.Upload(fileName, file); er != nil {
 			h.Metric.Failed.Add(1)
 
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 
 			return
 		}
-
-		// reading the file bytes
-		fileBytes, err := ioutil.ReadAll(file)
-		if err != nil {
-			h.Metric.Failed.Add(1)
-
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-
-			return
-		}
-
-		// write this byte array to our temporary file
-		_, _ = tempFile.Write(fileBytes)
-
-		// rename file
-		_ = os.Rename(tempFile.Name(), fileName)
 
 		log.Println("Successfully uploaded file [" + handler.Filename + "]")
 

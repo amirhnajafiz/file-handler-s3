@@ -3,11 +3,13 @@ package handler
 import (
 	"net/http"
 
+	"github.com/amirhnajafiz/hls/internal/port/s3"
 	"github.com/amirhnajafiz/hls/internal/telemetry/metric"
 	"go.opentelemetry.io/otel/trace"
 )
 
 type Handler struct {
+	S3     *s3.Handler
 	Trace  trace.Tracer
 	Metric metric.Metrics
 }
