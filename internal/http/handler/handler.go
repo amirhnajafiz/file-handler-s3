@@ -104,10 +104,6 @@ func (h Handler) UploadFile(mainDir string) http.HandlerFunc {
 			return
 		}
 
-		defer func(tempFile *os.File) {
-			_ = tempFile.Close()
-		}(tempFile)
-
 		// reading the file bytes
 		fileBytes, err := ioutil.ReadAll(file)
 		if err != nil {
@@ -184,7 +180,7 @@ func (h Handler) RemoveFile(mainDir string) http.HandlerFunc {
 		fileName := mainDir + "/" + r.FormValue("file")
 
 		if _, err := os.Stat(fileName); err == nil {
-			_ = os.Remove(fileName)
+			_ = os.RemoveAll(fileName)
 
 			log.Println("File removed")
 		}
