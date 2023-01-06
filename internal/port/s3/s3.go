@@ -2,9 +2,11 @@ package s3
 
 import (
 	"io"
+	"os"
 
 	"github.com/amirhnajafiz/hls/internal/storage"
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 )
 
@@ -30,6 +32,16 @@ func (h *Handler) Upload(key string, file io.Reader) error {
 }
 
 // Download file from s3 cluster.
-func (h *Handler) Download(key string) ([]byte, error) {
-	return nil, nil
+func (h *Handler) Download(key string, file *os.File) error {
+	// creating a new downloader
+	downloader := s3manager.NewDownloader(h.Storage.Session)
+
+	// download file from s3
+	_, err := downloader.Download(file,
+		&s3.GetObjectInput{
+			Bucket: aws.String(h.Storage.Cfg.Bucket),
+			Key:    aws.String(key),
+		})
+
+	return err
 }
