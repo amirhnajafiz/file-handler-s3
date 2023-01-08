@@ -140,14 +140,41 @@ func (h Handler) RemoveFile(mainDir string) http.HandlerFunc {
 	}
 }
 
-func (h Handler) DownloadFile(mainDir string) http.HandlerFunc {
+// DownloadFile from object storage
+func (h Handler) DownloadFile() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		t, _ := h.Trace.Start(context.Background(), "HLS-download")
 		defer t.Done()
 
 		h.Metric.Requests.Add(1)
 
-		fileName := mainDir + "/" + r.FormValue("file")
+		// get filename from request
+		fileName := r.FormValue("file")
+		if fileName == "" {
+			http.Error(w, "file cannot be empty", http.StatusBadRequest)
+
+			return
+		}
+
+		// create a temp file
+		file, err := os.Create(fileName)
+		if err != nil {
+			http.Error(w, "cannot create file", http.StatusInternalServerError)
+
+			return
+		}
+
+		// delete temp file
+		defer func(path string) {
+			_ = os.RemoveAll(path)
+		}(fileName)
+
+		// read file from storage
+		if er := h.S3.Download(fileName, file); er != nil {
+			http.Error(w, "cannot get file from storage", http.StatusInsufficientStorage)
+
+			return
+		}
 
 		w.Header().Set("Content-Disposition", "attachment; filename="+fileName)
 		w.Header().Set("Content-Type", r.Header.Get("Content-Type"))
