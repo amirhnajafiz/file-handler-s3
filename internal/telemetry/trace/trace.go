@@ -13,9 +13,10 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
+// New tracer.
 func New(cfg config.Trace) trace.Tracer {
 	if !cfg.Enabled {
-		return trace.NewNoopTracerProvider().Tracer("hls/client")
+		return trace.NewNoopTracerProvider().Tracer("fhs")
 	}
 
 	exporter, err := jaeger.New(
@@ -28,8 +29,8 @@ func New(cfg config.Trace) trace.Tracer {
 	res, err := resource.Merge(
 		resource.Default(),
 		resource.NewSchemaless(
-			semConv.ServiceNamespaceKey.String("snapp"),
-			semConv.ServiceNameKey.String("mqtt-blackbox-exporter"),
+			semConv.ServiceNamespaceKey.String("amirhnajafiz"),
+			semConv.ServiceNameKey.String("file-handling-system"),
 		),
 	)
 	if err != nil {
@@ -50,7 +51,7 @@ func New(cfg config.Trace) trace.Tracer {
 
 	otel.SetTextMapPropagator(tc)
 
-	tracer := otel.Tracer("hls/client")
+	tracer := otel.Tracer("fhs")
 
 	return tracer
 }

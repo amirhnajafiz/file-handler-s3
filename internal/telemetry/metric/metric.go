@@ -3,8 +3,8 @@ package metric
 import "github.com/prometheus/client_golang/prometheus"
 
 const (
-	Namespace = "hls"
-	Subsystem = "stream"
+	Namespace = "fhs"
+	Subsystem = "system"
 )
 
 // Metrics has all the client metrics.
