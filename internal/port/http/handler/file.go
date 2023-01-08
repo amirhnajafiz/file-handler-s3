@@ -13,7 +13,7 @@ import (
 func (h Handler) UploadFile() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		h.Metric.Requests.Add(1)
-		t, _ := h.Trace.Start(context.Background(), "HLS-upload")
+		t, _ := h.Trace.Start(context.Background(), "fhs-upload")
 		defer t.Done()
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -68,6 +68,9 @@ func (h Handler) UploadFile() http.HandlerFunc {
 // GetAllFiles returns the files.
 func (h Handler) GetAllFiles() http.HandlerFunc {
 	return func(w http.ResponseWriter, _ *http.Request) {
+		t, _ := h.Trace.Start(context.Background(), "fhs-get-all")
+		defer t.Done()
+
 		h.Metric.Requests.Add(1)
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
@@ -88,7 +91,7 @@ func (h Handler) GetAllFiles() http.HandlerFunc {
 // RemoveFile deletes a file.
 func (h Handler) RemoveFile() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		t, _ := h.Trace.Start(context.Background(), "HLS-remove")
+		t, _ := h.Trace.Start(context.Background(), "fhs-remove")
 		defer t.Done()
 
 		h.Metric.Requests.Add(1)
@@ -112,7 +115,7 @@ func (h Handler) RemoveFile() http.HandlerFunc {
 // DownloadFile get file and serve it.
 func (h Handler) DownloadFile() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		t, _ := h.Trace.Start(context.Background(), "HLS-download")
+		t, _ := h.Trace.Start(context.Background(), "fhs-download")
 		defer t.Done()
 
 		h.Metric.Requests.Add(1)
