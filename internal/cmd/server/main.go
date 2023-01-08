@@ -37,7 +37,7 @@ func New(cfg Config, t trace.Tracer, m metric.Metrics) {
 	// files
 	http.Handle("/files", h.Files())
 	// add a handler for uploading a file
-	http.Handle("/upload", h.UploadFile(mainDir))
+	http.Handle("/upload", h.UploadFile())
 	// get all files method
 	http.Handle("/all", h.GetAllFiles(mainDir))
 	// remove a file

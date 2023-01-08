@@ -13,7 +13,7 @@ import (
 )
 
 // UploadFile gets the file from user request and saves it
-func (h Handler) UploadFile(mainDir string) http.HandlerFunc {
+func (h Handler) UploadFile() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		h.Metric.Requests.Add(1)
 
@@ -52,9 +52,9 @@ func (h Handler) UploadFile(mainDir string) http.HandlerFunc {
 		// setting file name
 		var fileName string
 		if option != "" {
-			fileName = mainDir + "/" + option
+			fileName = option
 		} else {
-			fileName = mainDir + "/" + handler.Filename
+			fileName = handler.Filename
 		}
 
 		// logging the file information
@@ -71,7 +71,7 @@ func (h Handler) UploadFile(mainDir string) http.HandlerFunc {
 			return
 		}
 
-		log.Println("Successfully uploaded file [" + handler.Filename + "]")
+		log.Println("Successfully uploaded file [" + fileName + "]")
 
 		http.Redirect(w, r, "/files", http.StatusSeeOther)
 	}
