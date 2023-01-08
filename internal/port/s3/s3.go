@@ -10,6 +10,13 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 )
 
+// pack struct for movies.
+type pack struct {
+	Name       string `json:"name"`
+	Size       int64  `json:"size"`
+	LastModify string `json:"last_modify"`
+}
+
 // Handler contains the methods for uploading image to s3
 // and downloading images from s3.
 type Handler struct {
@@ -75,4 +82,38 @@ func (h *Handler) Delete(key string) error {
 	}
 
 	return nil
+}
+
+// GetAll returns all the objects in storage.
+func (h *Handler) GetAll() ([]pack, error) {
+	// create files array
+	var files []pack
+
+	// initialize a session in us-west-2 that the SDK will use to load
+	// credentials from the shared credentials file ~/.aws/credentials.
+	svc := s3.New(h.Storage.Session, &aws.Config{
+		Region:   aws.String(h.Storage.Cfg.Region),
+		Endpoint: aws.String(h.Storage.Cfg.Endpoint),
+	})
+
+	// Get the list of items
+	resp, err := svc.ListObjectsV2(
+		&s3.ListObjectsV2Input{
+			Bucket: aws.String(h.Storage.Cfg.Bucket),
+		},
+	)
+	if err != nil {
+		return files, err
+	}
+
+	// extract items information
+	for _, item := range resp.Contents {
+		files = append(files, pack{
+			Name:       *item.Key,
+			Size:       *item.Size,
+			LastModify: item.LastModified.String(),
+		})
+	}
+
+	return files, nil
 }

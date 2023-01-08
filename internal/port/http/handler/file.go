@@ -7,12 +7,9 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
-	"path/filepath"
-	"strings"
-	"time"
 )
 
-// UploadFile gets the file from user request and saves it
+// UploadFile gets the file from user request and saves it.
 func (h Handler) UploadFile() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		h.Metric.Requests.Add(1)
@@ -77,41 +74,20 @@ func (h Handler) UploadFile() http.HandlerFunc {
 	}
 }
 
-func (h Handler) GetAllFiles(mainDir string) http.HandlerFunc {
+// GetAllFiles returns the files in s3 storage.
+func (h Handler) GetAllFiles() http.HandlerFunc {
 	return func(w http.ResponseWriter, _ *http.Request) {
-		type pack struct {
-			Name       string `json:"name"`
-			Size       int64  `json:"size"`
-			LastModify string `json:"last_modify"`
-		}
-
 		h.Metric.Requests.Add(1)
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
-		var files []pack
-
-		err := filepath.Walk(mainDir, func(path string, info os.FileInfo, err error) error {
-			parts := strings.Split(path, "/")
-			if len(parts) < 2 {
-				return nil
-			}
-
-			temp := pack{
-				Name:       parts[1],
-				Size:       info.Size(),
-				LastModify: info.ModTime().Format(time.RFC822),
-			}
-
-			files = append(files, temp)
-
-			return nil
-		})
-
+		files, err := h.S3.GetAll()
 		if err != nil {
 			h.Metric.Failed.Add(1)
 
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+
+			return
 		}
 
 		w.Header().Set("Content-Type", "application/json")
