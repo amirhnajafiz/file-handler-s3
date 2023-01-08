@@ -10,6 +10,9 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/s3"
 )
 
 // UploadFile gets the file from user request and saves it
@@ -119,7 +122,8 @@ func (h Handler) GetAllFiles(mainDir string) http.HandlerFunc {
 	}
 }
 
-func (h Handler) RemoveFile(mainDir string) http.HandlerFunc {
+// RemoveFile from object storage.
+func (h Handler) RemoveFile() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		t, _ := h.Trace.Start(context.Background(), "HLS-remove")
 		defer t.Done()
@@ -128,13 +132,40 @@ func (h Handler) RemoveFile(mainDir string) http.HandlerFunc {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
-		fileName := mainDir + "/" + r.FormValue("file")
+		// get file name from user request
+		fileName := r.FormValue("file")
 
-		if _, err := os.Stat(fileName); err == nil {
-			_ = os.RemoveAll(fileName)
+		// create a new svc
+		svc := s3.New(h.S3.Storage.Session, &aws.Config{
+			Region:   aws.String(h.S3.Storage.Cfg.Region),
+			Endpoint: aws.String(h.S3.Storage.Cfg.Endpoint),
+		})
 
-			log.Println("File removed")
+		// delete the item
+		_, err := svc.DeleteObject(
+			&s3.DeleteObjectInput{
+				Bucket: aws.String(h.S3.Storage.Cfg.Bucket),
+				Key:    aws.String(fileName),
+			},
+		)
+		if err != nil {
+			http.Error(w, "cannot delete item", http.StatusInternalServerError)
+
+			return
 		}
+
+		// wait until object not exists
+		err = svc.WaitUntilObjectNotExists(&s3.HeadObjectInput{
+			Bucket: aws.String(h.S3.Storage.Cfg.Bucket),
+			Key:    aws.String(fileName),
+		})
+		if err != nil {
+			http.Error(w, "failed to remove object", http.StatusBadRequest)
+
+			return
+		}
+
+		log.Printf("removed: %s\n", fileName)
 
 		http.Redirect(w, r, "/files", http.StatusSeeOther)
 	}
