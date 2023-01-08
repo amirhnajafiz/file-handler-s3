@@ -10,9 +10,6 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
-
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3"
 )
 
 // UploadFile gets the file from user request and saves it
@@ -135,32 +132,9 @@ func (h Handler) RemoveFile() http.HandlerFunc {
 		// get file name from user request
 		fileName := r.FormValue("file")
 
-		// create a new svc
-		svc := s3.New(h.S3.Storage.Session, &aws.Config{
-			Region:   aws.String(h.S3.Storage.Cfg.Region),
-			Endpoint: aws.String(h.S3.Storage.Cfg.Endpoint),
-		})
-
-		// delete the item
-		_, err := svc.DeleteObject(
-			&s3.DeleteObjectInput{
-				Bucket: aws.String(h.S3.Storage.Cfg.Bucket),
-				Key:    aws.String(fileName),
-			},
-		)
-		if err != nil {
-			http.Error(w, "cannot delete item", http.StatusInternalServerError)
-
-			return
-		}
-
-		// wait until object not exists
-		err = svc.WaitUntilObjectNotExists(&s3.HeadObjectInput{
-			Bucket: aws.String(h.S3.Storage.Cfg.Bucket),
-			Key:    aws.String(fileName),
-		})
-		if err != nil {
-			http.Error(w, "failed to remove object", http.StatusBadRequest)
+		// remove file from s3
+		if err := h.S3.Delete(fileName); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
 
 			return
 		}

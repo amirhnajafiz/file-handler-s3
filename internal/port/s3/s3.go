@@ -45,3 +45,34 @@ func (h *Handler) Download(key string, file *os.File) error {
 
 	return err
 }
+
+// Delete object from s3 cluster.
+func (h *Handler) Delete(key string) error {
+	// create a new svc
+	svc := s3.New(h.Storage.Session, &aws.Config{
+		Region:   aws.String(h.Storage.Cfg.Region),
+		Endpoint: aws.String(h.Storage.Cfg.Endpoint),
+	})
+
+	// delete the item
+	_, err := svc.DeleteObject(
+		&s3.DeleteObjectInput{
+			Bucket: aws.String(h.Storage.Cfg.Bucket),
+			Key:    aws.String(key),
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	// wait until object not exists
+	err = svc.WaitUntilObjectNotExists(&s3.HeadObjectInput{
+		Bucket: aws.String(h.Storage.Cfg.Bucket),
+		Key:    aws.String(key),
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
