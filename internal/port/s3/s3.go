@@ -19,18 +19,37 @@ type pack struct {
 
 // Handler contains the methods for uploading image to s3
 // and downloading images from s3.
-type Handler struct {
-	Storage *storage.S3
+type Handler interface {
+	Upload(key string, file io.Reader) error
+	Download(key string, file *os.File) error
+	Delete(key string) error
+	GetAll() ([]pack, error)
+}
+
+type handler struct {
+	storage *storage.S3
+}
+
+// New s3 handler.
+func New(cfg storage.Config) (Handler, error) {
+	session, err := storage.NewSession(cfg)
+	if err != nil {
+		return nil, err
+	}
+
+	return &handler{
+		storage: session,
+	}, nil
 }
 
 // Upload file to s3 cluster.
-func (h *Handler) Upload(key string, file io.Reader) error {
+func (h *handler) Upload(key string, file io.Reader) error {
 	// creating a new uploader
-	uploader := s3manager.NewUploader(h.Storage.Session)
+	uploader := s3manager.NewUploader(h.storage.Session)
 
 	// upload image into s3 database
 	_, err := uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String(h.Storage.Cfg.Bucket),
+		Bucket: aws.String(h.storage.Cfg.Bucket),
 		Key:    aws.String(key),
 		Body:   file,
 	})
@@ -39,14 +58,14 @@ func (h *Handler) Upload(key string, file io.Reader) error {
 }
 
 // Download file from s3 cluster.
-func (h *Handler) Download(key string, file *os.File) error {
+func (h *handler) Download(key string, file *os.File) error {
 	// creating a new downloader
-	downloader := s3manager.NewDownloader(h.Storage.Session)
+	downloader := s3manager.NewDownloader(h.storage.Session)
 
 	// download file from s3
 	_, err := downloader.Download(file,
 		&s3.GetObjectInput{
-			Bucket: aws.String(h.Storage.Cfg.Bucket),
+			Bucket: aws.String(h.storage.Cfg.Bucket),
 			Key:    aws.String(key),
 		})
 
@@ -54,17 +73,17 @@ func (h *Handler) Download(key string, file *os.File) error {
 }
 
 // Delete object from s3 cluster.
-func (h *Handler) Delete(key string) error {
+func (h *handler) Delete(key string) error {
 	// create a new svc
-	svc := s3.New(h.Storage.Session, &aws.Config{
-		Region:   aws.String(h.Storage.Cfg.Region),
-		Endpoint: aws.String(h.Storage.Cfg.Endpoint),
+	svc := s3.New(h.storage.Session, &aws.Config{
+		Region:   aws.String(h.storage.Cfg.Region),
+		Endpoint: aws.String(h.storage.Cfg.Endpoint),
 	})
 
 	// delete the item
 	_, err := svc.DeleteObject(
 		&s3.DeleteObjectInput{
-			Bucket: aws.String(h.Storage.Cfg.Bucket),
+			Bucket: aws.String(h.storage.Cfg.Bucket),
 			Key:    aws.String(key),
 		},
 	)
@@ -74,7 +93,7 @@ func (h *Handler) Delete(key string) error {
 
 	// wait until object not exists
 	err = svc.WaitUntilObjectNotExists(&s3.HeadObjectInput{
-		Bucket: aws.String(h.Storage.Cfg.Bucket),
+		Bucket: aws.String(h.storage.Cfg.Bucket),
 		Key:    aws.String(key),
 	})
 	if err != nil {
@@ -85,21 +104,21 @@ func (h *Handler) Delete(key string) error {
 }
 
 // GetAll returns all the objects in storage.
-func (h *Handler) GetAll() ([]pack, error) {
+func (h *handler) GetAll() ([]pack, error) {
 	// create files array
 	var files []pack
 
 	// initialize a session in us-west-2 that the SDK will use to load
 	// credentials from the shared credentials file ~/.aws/credentials.
-	svc := s3.New(h.Storage.Session, &aws.Config{
-		Region:   aws.String(h.Storage.Cfg.Region),
-		Endpoint: aws.String(h.Storage.Cfg.Endpoint),
+	svc := s3.New(h.storage.Session, &aws.Config{
+		Region:   aws.String(h.storage.Cfg.Region),
+		Endpoint: aws.String(h.storage.Cfg.Endpoint),
 	})
 
 	// Get the list of items
 	resp, err := svc.ListObjectsV2(
 		&s3.ListObjectsV2Input{
-			Bucket: aws.String(h.Storage.Cfg.Bucket),
+			Bucket: aws.String(h.storage.Cfg.Bucket),
 		},
 	)
 	if err != nil {
