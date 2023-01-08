@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 )
 
+// S3 is our object storage session.
 type S3 struct {
 	Cfg     Config
 	Session *session.Session
@@ -15,8 +16,10 @@ type S3 struct {
 
 // NewSession will create a new s3 session.
 func NewSession(cfg Config) (*S3, error) {
+	// creating a new s3
 	var s3 S3
 
+	// creating a new session
 	newSession, err := session.NewSession(
 		&aws.Config{
 			Region: aws.String(cfg.Region),

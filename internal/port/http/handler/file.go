@@ -13,17 +13,15 @@ import (
 func (h Handler) UploadFile() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		h.Metric.Requests.Add(1)
-
 		t, _ := h.Trace.Start(context.Background(), "HLS-upload")
 		defer t.Done()
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
-		// Maximum size of form request
+		// maximum size of form request
 		err := r.ParseMultipartForm(10 << 20)
 		if err != nil {
 			h.Metric.Failed.Add(1)
-
 			http.Error(w, err.Error(), http.StatusRequestEntityTooLarge)
 
 			return
@@ -36,7 +34,6 @@ func (h Handler) UploadFile() http.HandlerFunc {
 		file, handler, err := r.FormFile("myFile")
 		if err != nil {
 			h.Metric.Failed.Add(1)
-
 			http.Error(w, err.Error(), http.StatusBadRequest)
 
 			return
@@ -54,37 +51,30 @@ func (h Handler) UploadFile() http.HandlerFunc {
 			fileName = handler.Filename
 		}
 
-		// logging the file information
-		log.Printf("Uploaded File: %+v\n", handler.Filename)
-		log.Printf("File Size: %+v\n", handler.Size)
-		log.Printf("MIME Header: %+v\n", handler.Header)
-
 		// upload file into s3
 		if er := h.S3.Upload(fileName, file); er != nil {
 			h.Metric.Failed.Add(1)
-
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 
 			return
 		}
 
-		log.Println("Successfully uploaded file [" + fileName + "]")
-
+		// logging the file information
+		log.Printf("Successfully uploaded file: %s\n", fileName)
 		http.Redirect(w, r, "/files", http.StatusSeeOther)
 	}
 }
 
-// GetAllFiles returns the files in s3 storage.
+// GetAllFiles returns the files.
 func (h Handler) GetAllFiles() http.HandlerFunc {
 	return func(w http.ResponseWriter, _ *http.Request) {
 		h.Metric.Requests.Add(1)
-
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
+		// get all files from s3.
 		files, err := h.S3.GetAll()
 		if err != nil {
 			h.Metric.Failed.Add(1)
-
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 
 			return
@@ -95,14 +85,13 @@ func (h Handler) GetAllFiles() http.HandlerFunc {
 	}
 }
 
-// RemoveFile from object storage.
+// RemoveFile deletes a file.
 func (h Handler) RemoveFile() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		t, _ := h.Trace.Start(context.Background(), "HLS-remove")
 		defer t.Done()
 
 		h.Metric.Requests.Add(1)
-
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
 		// get file name from user request
@@ -116,12 +105,11 @@ func (h Handler) RemoveFile() http.HandlerFunc {
 		}
 
 		log.Printf("removed: %s\n", fileName)
-
 		http.Redirect(w, r, "/files", http.StatusSeeOther)
 	}
 }
 
-// DownloadFile from object storage
+// DownloadFile get file and serve it.
 func (h Handler) DownloadFile() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		t, _ := h.Trace.Start(context.Background(), "HLS-download")
@@ -140,6 +128,7 @@ func (h Handler) DownloadFile() http.HandlerFunc {
 		// create a temp file
 		file, err := os.Create(fileName)
 		if err != nil {
+			h.Metric.Failed.Add(1)
 			http.Error(w, "cannot create file", http.StatusInternalServerError)
 
 			return
@@ -152,14 +141,18 @@ func (h Handler) DownloadFile() http.HandlerFunc {
 
 		// read file from storage
 		if er := h.S3.Download(fileName, file); er != nil {
+			h.Metric.Failed.Add(1)
 			http.Error(w, "cannot get file from storage", http.StatusInsufficientStorage)
 
 			return
 		}
 
+		st, _ := os.Stat(fileName)
+
+		h.Metric.BitRate.Observe(float64(st.Size()))
+
 		w.Header().Set("Content-Disposition", "attachment; filename="+fileName)
 		w.Header().Set("Content-Type", r.Header.Get("Content-Type"))
-
 		http.ServeFile(w, r, fileName)
 	}
 }
