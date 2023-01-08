@@ -9,7 +9,7 @@ import (
 )
 
 type Handler struct {
-	S3     *s3.Handler
+	S3     s3.Handler
 	Trace  trace.Tracer
 	Metric metric.Metrics
 }
