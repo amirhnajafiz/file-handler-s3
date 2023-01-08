@@ -39,11 +39,11 @@ func New(cfg Config, t trace.Tracer, m metric.Metrics) {
 	// add a handler for uploading a file
 	http.Handle("/upload", h.UploadFile())
 	// get all files method
-	http.Handle("/all", h.GetAllFiles(mainDir))
+	http.Handle("/all", h.GetAllFiles())
 	// remove a file
-	http.Handle("/del", h.RemoveFile(mainDir))
+	http.Handle("/del", h.RemoveFile())
 	// download file
-	http.Handle("/get", h.DownloadFile(mainDir))
+	http.Handle("/get", h.DownloadFile())
 
 	log.Printf("Starting server on %v\n", cfg.Port)
 	log.Printf("Serving %s on HTTP port: %v\n", mainDir, cfg.Port)
