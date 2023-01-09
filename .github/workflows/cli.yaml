@@ -1,4 +1,4 @@
-name: hls
+name: fhs pipeline
 
 on:
   push:
