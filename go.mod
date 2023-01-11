@@ -1,4 +1,4 @@
-module github.com/amirhnajafiz/hls
+module github.com/amirhnajafiz/fhs
 
 go 1.19
 
