@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"github.com/amirhnajafiz/hls/internal/cmd/server"
-	"github.com/amirhnajafiz/hls/internal/config"
-	"github.com/amirhnajafiz/hls/internal/port/s3"
-	"github.com/amirhnajafiz/hls/internal/telemetry/metric"
-	"github.com/amirhnajafiz/hls/internal/telemetry/trace"
+	"github.com/amirhnajafiz/fhs/internal/cmd/server"
+	"github.com/amirhnajafiz/fhs/internal/config"
+	"github.com/amirhnajafiz/fhs/internal/port/s3"
+	"github.com/amirhnajafiz/fhs/internal/telemetry/metric"
+	"github.com/amirhnajafiz/fhs/internal/telemetry/trace"
 )
 
 func Execute() {

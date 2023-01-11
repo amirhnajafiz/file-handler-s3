@@ -4,7 +4,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/amirhnajafiz/hls/internal/storage"
+	"github.com/amirhnajafiz/fhs/internal/storage"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"

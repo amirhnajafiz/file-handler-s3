@@ -3,8 +3,8 @@ package handler
 import (
 	"net/http"
 
-	"github.com/amirhnajafiz/hls/internal/port/s3"
-	"github.com/amirhnajafiz/hls/internal/telemetry/metric"
+	"github.com/amirhnajafiz/fhs/internal/port/s3"
+	"github.com/amirhnajafiz/fhs/internal/telemetry/metric"
 	"go.opentelemetry.io/otel/trace"
 )
 

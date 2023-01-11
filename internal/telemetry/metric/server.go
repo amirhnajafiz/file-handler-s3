@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/amirhnajafiz/hls/internal/telemetry/config"
+	"github.com/amirhnajafiz/fhs/internal/telemetry/config"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 

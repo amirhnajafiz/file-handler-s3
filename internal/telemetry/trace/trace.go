@@ -3,7 +3,7 @@ package trace
 import (
 	"log"
 
-	"github.com/amirhnajafiz/hls/internal/telemetry/config"
+	"github.com/amirhnajafiz/fhs/internal/telemetry/config"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/jaeger"
 	"go.opentelemetry.io/otel/propagation"

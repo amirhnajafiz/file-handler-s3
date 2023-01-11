@@ -1,9 +1,9 @@
 package config
 
 import (
-	"github.com/amirhnajafiz/hls/internal/cmd/server"
-	"github.com/amirhnajafiz/hls/internal/storage"
-	"github.com/amirhnajafiz/hls/internal/telemetry/config"
+	"github.com/amirhnajafiz/fhs/internal/cmd/server"
+	"github.com/amirhnajafiz/fhs/internal/storage"
+	"github.com/amirhnajafiz/fhs/internal/telemetry/config"
 )
 
 func Default() Config {
